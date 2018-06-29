@@ -90,9 +90,7 @@ export default class RadarChart extends Component
 
     const length = chart.rings.length
     const rings = chart.rings.map(function (r, i) {
-      if (i !== length - 1 ){
         return (<Path key={'rings'+i} d={r.path.print()} stroke={colors.stroke} strokeOpacity={colors.strokeOpacity} fill='none' />)
-      }
     })
 
     const textStyle = fontAdapt(options.label)
@@ -102,9 +100,21 @@ export default class RadarChart extends Component
         textStyle.onLabelPress(keys[i], keys_value[`${keys[i]}`]);
       }
 
+        let textX = p[0],
+            textY = p[1],
+            textAnchor = 'middle';
+        if ( p[0] < center[0] ) {
+            textX -=  10;
+            textAnchor = 'end';
+        } 
+        if (p[0] > center[0]) {
+            textAnchor = 'start';
+            textX +=  10;
+        }
+        p[1] < center[1] ? textY -= 20 : ''; 
       return (
               <G key={'label' + i}>
-                  <Line x1={p[0]} y1={p[1]} x2={center[0]} y2={center[1]} stroke={colors.stroke} strokeOpacity={colors.strokeOpacity}/>
+                  <Line x1={p[0]} y1={p[1]} x2={center[0]} y2={center[1]} stroke={ colors.stroke} strokeOpacity={colors.strokeOpacity}/>
                   <Text
                       fontFamily={textStyle.fontFamily}
                       fontSize={textStyle.fontSize}
@@ -112,7 +122,8 @@ export default class RadarChart extends Component
                       fontStyle={textStyle.fontStyle}
                       fill={textStyle.fill}
                       onPress={onLabelPress}
-                      textAnchor="middle" x={Math.floor(p[0])} y={Math.floor(p[1])}>{keys[i]}
+                      textAnchor={textAnchor} 
+                        x={ textX } y={ textY }>{keys[i]}
                   </Text>
               </G>
             )
